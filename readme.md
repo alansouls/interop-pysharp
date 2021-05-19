@@ -40,7 +40,8 @@ Esse é um ponto de bastante importância nesse projeto, precisamos escolher uma
 * Arquivo comum, definindo um protocolo próprio
 * Código PS sendo criado dinamicamente com os dados "impressos" nele
 * Banco de dados local (sqlite)
-* Via arquivo, usando memória mapeada em arquivo (Memory-Mapped File), porém usando uma representação binária dos dados.
+* Via arquivo, usando memória mapeada em arquivo (Memory-Mapped File), porém usando uma representação binária dos dados
+* Via argumentos de linha de comando.
 
 A última opção inicialmente parece a melhor escolha em termos de custo, um arquivo com representação binária ocupa menos espaço, logo tendo um custo menor de espaço, e de tempo em relação a escrita e leitura do arquivo. Um problema aparente é o Encode e Decode dos dados de C# para Python, visto que as duas linguagens podem possuir diferentes representação binária de suas estruturas de dados, isso pode causar dificuldade extrema de implementação ou custo computacional, requer avaliação.  
 
@@ -87,12 +88,14 @@ O roadmap de implementação inclui os seguintes pontos:
 ---- 1.2.3 Código sendo dinâmicamente alterado para troca de dados - [ ]  
 ---- 1.2.4 Troca de dados a partir de um banco local sqlite - [ ]  
 ---- 1.2.5 Troca de dados a partir certo arquivo, através de memória mapeada em arquivo usando representação binária - [ ]  
+---- 1.2.6 Troca de dados a partir de argumentos de linha de comando - [ ]  
 -- 1.3 Criar código em c# que chama código python intermediário - [ ]  
 ---- 1.3.1 Troca de dados a partir de certo arquivo, através de memória mapeada em arquivo - [ ]  
 ---- 1.3.2 Troca de dados a partir de certo arquivo -  []  
 ---- 1.3.3 Código sendo dinâmicamente alterado para troca de dados - [ ]  
 ---- 1.3.4 Troca de dados a partir de um banco local sqlite - [ ]  
 ---- 1.3.5 Troca de dados a partir certo arquivo, através de memória mapeada em arquivo usando representação binária - [ ]  
+---- 1.3.6 Troca de dados a partir de argumentos de linha de comando - [ ]  
 -- 1.4 Benchmarking das operações - [ ]  
 ---- 1.4.1 Criar código de benchmarking para código python intermediário - [ ]  
 ---- 1.4.2 Criar código de benchmarking para código c# - [ ]   
