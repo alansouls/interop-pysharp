@@ -3,7 +3,7 @@
 
 ### Introdução
 
-O projeto visa construir um framework de produtividade que facilidade o processo de interoperabilidade entre essas duas linguagens. O usuário desse framework deve ser capaz de a partir de um código em C# rodando sobre .NET Core (ou .NET >= 5) em poucas linhas chamar funções 
+O projeto visa construir um framework de produtividade que facilite o processo de interoperabilidade entre essas duas linguagens. O usuário desse framework deve ser capaz de a partir de um código em C# rodando sobre .NET Core (ou .NET >= 5) em poucas linhas chamar funções 
 escritas em módulos pyhton, sendo possível passar parâmetros de variáveis contidadas no processo C# para o processo python, e obviamente, trazer 
 o resultado da função executada no processo python de volta para o processo C#.  
 
