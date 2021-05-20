@@ -36,16 +36,31 @@ O código CS deve ser bem estruturado, possuir um design fixo e seguir os princ�
 ### Transferência de dados entre CS e PS  
 
 Esse é um ponto de bastante importância nesse projeto, precisamos escolher uma maneira de transferir os dados do código CS para o código PS e vice-versa. Essa transferência deve ser pouco custosa, pois queremos ser melhor que o uso de protocolos de rede, e de fácil generalização, já que podemos ter diversos tipos de código usando esse framework. As transferências pensadas até agora são:  
-* Via arquivo, usando memória mapeada em arquivo (Memory-Mapped File)  
-* Arquivo comum, definindo um protocolo próprio
+* Via arquivo de texto
 * Código PS sendo criado dinamicamente com os dados "impressos" nele
 * Banco de dados local (sqlite)
 * Via arquivo, usando memória mapeada em arquivo (Memory-Mapped File), porém usando uma representação binária dos dados
-* Via argumentos de linha de comando.
+* ~~Via argumentos de linha de comando~~. Esse método será descartado por conta de limites no número de caractéres que podem ser passados em argumentos de linha de comando no windows.
 
 A última opção inicialmente parece a melhor escolha em termos de custo, um arquivo com representação binária ocupa menos espaço, logo tendo um custo menor de espaço, e de tempo em relação a escrita e leitura do arquivo. Um problema aparente é o Encode e Decode dos dados de C# para Python, visto que as duas linguagens podem possuir diferentes representação binária de suas estruturas de dados, isso pode causar dificuldade extrema de implementação ou custo computacional, requer avaliação.  
 
 Apesar do comentário acima, precisamos selecionar o método que melhor atende nossas necessidades, para isso, teremos um projeto de benchmarking de cada um desses métodos, tanto da parte PS quanto da parte CS. A partir dos resultados selecionaremos o método ideal.  
+
+#### Arquivo de Texto
+
+Esse método a princípio parece ser o menos interessante de todos, pois como sabemos, armazenar dados em forma textual traz consigo dois custos. Primeiro, temos o custo de espaço, já que, a representação textual de um dado geralmente é maior quando é representado em forma de texto, por exemplo: o maior inteiro de 32 bits (2147483647) ocupa 4 bytes de espaço, já em forma textual, cada dígito é um byte logo ocupando 10 bytes, mais que o dobro. Além disso, temos o custo de tempo adicional para conversões, se eu quero somar dois inteiros em python por exemplo, preciso do dado em formato int, logo preciso converter a string lida do arquivo para o inteiro que o programa utiliza e vice-versa para o caso de escrita.  
+
+A vantagem desse método é que ele requer uma implementação bem simples. A probabilidade de escolha dele é bem baixa.  
+
+Tabela com resultados de benchamrking¹:  
+| Type    |  	Read Time(s)	| Write Time(s) |	Read Time Mean(s) | Write Time Mean(s) |
+| ------- | --------------- | ------------- | ----------------- | ------------------ |
+Int       |	0.0016393999999999992 |	0.009070299999999996 |	0.00016393999999999992 |	0.0009070299999999996 |
+Int List  |	4.8826696 |	2.6946900000000005 |	0.48826695999999997 |	0.26946900000000007 |
+Float     |	0.011441700000000665 |	0.005532200000000209 |	0.0011441700000000665 |	0.0005532200000000209 |
+Float List | 	12.759683900000002 |	16.439356300000004	 | 1.2759683900000003 | 	1.6439356300000003 |  
+
+¹ Os resultados foram gerados rodando cada código de leitura e escrita 10 vezes cada, considerando leitura/escrita do arquivo e conversão dos dados. O tempo foi medido usando a biblioteca timeit do python e os arquivos foram lidos e escritos a partir de um disco rígido.
 
 TODO: Colocar resultados do benchmarking  
 
@@ -83,15 +98,13 @@ O roadmap de implementação inclui os seguintes pontos:
 1 Prova de Conceito - [ ]  
 -- 1.1 Criar modulo simples em python - [:heavy_check_mark:]  
 -- 1.2 Criar código python intermediário - [ ]  
----- 1.2.1 Troca de dados a partir de certo arquivo, através de memória mapeada em arquivo - [ ]  
----- 1.2.2 Troca de dados a partir de certo arquivo - [ ]  
+---- 1.2.1 Troca de dados a partir de certo arquivo de texto - [:heavy_check_mark:]  
 ---- 1.2.3 Código sendo dinâmicamente alterado para troca de dados - [ ]  
 ---- 1.2.4 Troca de dados a partir de um banco local sqlite - [ ]  
 ---- 1.2.5 Troca de dados a partir certo arquivo, através de memória mapeada em arquivo usando representação binária - [ ]  
 ---- 1.2.6 Troca de dados a partir de argumentos de linha de comando - [ ]  
 -- 1.3 Criar código em c# que chama código python intermediário - [ ]  
----- 1.3.1 Troca de dados a partir de certo arquivo, através de memória mapeada em arquivo - [ ]  
----- 1.3.2 Troca de dados a partir de certo arquivo -  []  
+---- 1.3.1 Troca de dados a partir de certo arquivo de texto - [ ]  
 ---- 1.3.3 Código sendo dinâmicamente alterado para troca de dados - [ ]  
 ---- 1.3.4 Troca de dados a partir de um banco local sqlite - [ ]  
 ---- 1.3.5 Troca de dados a partir certo arquivo, através de memória mapeada em arquivo usando representação binária - [ ]  
