@@ -37,7 +37,6 @@ O código CS deve ser bem estruturado, possuir um design fixo e seguir os princ�
 
 Esse é um ponto de bastante importância nesse projeto, precisamos escolher uma maneira de transferir os dados do código CS para o código PS e vice-versa. Essa transferência deve ser pouco custosa, pois queremos ser melhor que o uso de protocolos de rede, e de fácil generalização, já que podemos ter diversos tipos de código usando esse framework. As transferências pensadas até agora são:  
 * Via arquivo de texto
-* Código PS sendo criado dinamicamente com os dados "impressos" nele
 * Banco de dados local (sqlite)
 * Via arquivo, usando memória mapeada em arquivo (Memory-Mapped File), porém usando uma representação binária dos dados
 * ~~Via argumentos de linha de comando~~. Esse método será descartado por conta de limites no número de caractéres que podem ser passados em argumentos de linha de comando no windows.
@@ -61,6 +60,31 @@ Float     |	0.011441700000000665 |	0.005532200000000209 |	0.0011441700000000665 
 Float List | 	12.759683900000002 |	16.439356300000004	 | 1.2759683900000003 | 	1.6439356300000003 |  
 
 ¹ Os resultados foram gerados rodando cada código de leitura e escrita 10 vezes cada, considerando leitura/escrita do arquivo e conversão dos dados. O tempo foi medido usando a biblioteca timeit do python e os arquivos foram lidos e escritos a partir de um disco rígido.
+
+Para a parte CS, foi usada uma biblioteca de benchmarking, a BenchmarkDotNet, e temos os seguintes resultados
+
+``` ini
+
+BenchmarkDotNet=v0.13.0, OS=Windows 10.0.19042.985 (20H2/October2020Update)
+AMD Ryzen 3 2200G with Radeon Vega Graphics, 1 CPU, 4 logical and 4 physical cores
+.NET SDK=5.0.201
+  [Host]     : .NET 5.0.4 (5.0.421.11614), X64 RyuJIT
+  DefaultJob : .NET 5.0.4 (5.0.421.11614), X64 RyuJIT
+
+
+```
+|              Method |           Mean |        Error |       StdDev |         Median |
+|-------------------- |---------------:|-------------:|-------------:|---------------:|
+|        WriteIntData |       357.4 μs |     18.15 μs |     53.52 μs |       332.6 μs |
+|   WriteIntArrayData |   138,821.4 μs |  2,726.04 μs |  4,162.95 μs |   138,042.0 μs |
+|      WriteFloatData |       376.6 μs |     18.37 μs |     54.17 μs |       350.5 μs |
+| WriteFloatArrayData |   751,595.3 μs | 14,959.45 μs | 30,558.20 μs |   737,750.9 μs |
+|         ReadIntData |       110.7 μs |      1.60 μs |      1.49 μs |       111.3 μs |
+|    ReadIntArrayData |   284,359.6 μs |  5,596.83 μs |  8,026.81 μs |   284,162.0 μs |
+|       ReadFloatData |       120.7 μs |      2.37 μs |      2.63 μs |       120.6 μs |
+|  ReadFloatArrayData | 1,080,299.9 μs |  9,779.04 μs |  8,668.86 μs | 1,080,766.6 μs |
+
+
 
 TODO: Colocar resultados do benchmarking  
 
@@ -99,16 +123,14 @@ O roadmap de implementação inclui os seguintes pontos:
 -- 1.1 Criar modulo simples em python - [:heavy_check_mark:]  
 -- 1.2 Criar código python intermediário - [ ]  
 ---- 1.2.1 Troca de dados a partir de certo arquivo de texto - [:heavy_check_mark:]  
----- 1.2.3 Código sendo dinâmicamente alterado para troca de dados - [ ]  
----- 1.2.4 Troca de dados a partir de um banco local sqlite - [ ]  
----- 1.2.5 Troca de dados a partir certo arquivo, através de memória mapeada em arquivo usando representação binária - [ ]  
----- 1.2.6 Troca de dados a partir de argumentos de linha de comando - [:heavy_check_mark:]  
+---- 1.2.2 Troca de dados a partir de um banco local sqlite - [ ]  
+---- 1.2.3 Troca de dados a partir certo arquivo, através de memória mapeada em arquivo usando representação binária - [ ]  
+---- 1.2.4 Troca de dados a partir de argumentos de linha de comando - [:heavy_check_mark:]  
 -- 1.3 Criar código em c# que chama código python intermediário - [ ]  
 ---- 1.3.1 Troca de dados a partir de certo arquivo de texto - [ ]  
----- 1.3.3 Código sendo dinâmicamente alterado para troca de dados - [ ]  
----- 1.3.4 Troca de dados a partir de um banco local sqlite - [ ]  
----- 1.3.5 Troca de dados a partir certo arquivo, através de memória mapeada em arquivo usando representação binária - [ ]  
----- 1.3.6 Troca de dados a partir de argumentos de linha de comando - [:heavy_check_mark:]  
+---- 1.3.2 Troca de dados a partir de um banco local sqlite - [ ]  
+---- 1.3.3 Troca de dados a partir certo arquivo, através de memória mapeada em arquivo usando representação binária - [ ]  
+---- 1.3.4 Troca de dados a partir de argumentos de linha de comando - [:heavy_check_mark:]  
 -- 1.4 Benchmarking das operações - [ ]  
 ---- 1.4.1 Criar código de benchmarking para código python intermediário - [ ]  
 ---- 1.4.2 Criar código de benchmarking para código c# - [ ]   
