@@ -8,11 +8,7 @@ namespace PyInteropPoC
     {
         static void Main(string[] args)
         {
-            BenchmarkRunner.Run<SQLiteTransfer>();
-
-            //var a = new SQLiteTransfer();
-            //a.Setup();
-            //a.Run();
+            BenchmarkRunner.Run<ByteTransfer>();
         }
     }
 }

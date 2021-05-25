@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+<meta charset='utf-8' />
+<title>PoCLib.ByteTransfer-20210524-221710</title>
+
+<style type="text/css">
+	table { border-collapse: collapse; display: block; width: 100%; overflow: auto; }
+	td, th { padding: 6px 13px; border: 1px solid #ddd; text-align: right; }
+	tr { background-color: #fff; border-top: 1px solid #ccc; }
+	tr:nth-child(even) { background: #f8f8f8; }
+</style>
+</head>
+<body>
+<pre><code>
+BenchmarkDotNet=v0.13.0, OS=Windows 10.0.19042.985 (20H2/October2020Update)
+AMD Ryzen 3 2200G with Radeon Vega Graphics, 1 CPU, 4 logical and 4 physical cores
+.NET SDK=5.0.201
+  [Host]     : .NET 5.0.4 (5.0.421.11614), X64 RyuJIT
+  DefaultJob : .NET 5.0.4 (5.0.421.11614), X64 RyuJIT
+</code></pre>
+<pre><code></code></pre>
+
+<table>
+<thead><tr><th>       Method</th><th> Mean</th><th>Error</th><th>StdDev</th><th>Median</th>
+</tr>
+</thead><tbody><tr><td>WriteIntData</td><td>380.3 &mu;s</td><td>19.98 &mu;s</td><td>58.92 &mu;s</td><td>357.1 &mu;s</td>
+</tr><tr><td>ReadIntData</td><td>382.8 &mu;s</td><td>9.05 &mu;s</td><td>26.39 &mu;s</td><td>380.6 &mu;s</td>
+</tr><tr><td>WriteIntArrayData</td><td>39,404.0 &mu;s</td><td>777.93 &mu;s</td><td>1,164.36 &mu;s</td><td>39,440.8 &mu;s</td>
+</tr><tr><td>ReadIntArrayData</td><td>13,687.6 &mu;s</td><td>264.39 &mu;s</td><td>411.63 &mu;s</td><td>13,753.6 &mu;s</td>
+</tr><tr><td>WriteFloatData</td><td>384.1 &mu;s</td><td>19.68 &mu;s</td><td>57.71 &mu;s</td><td>362.8 &mu;s</td>
+</tr><tr><td>ReadFloatData</td><td>363.1 &mu;s</td><td>6.43 &mu;s</td><td>6.61 &mu;s</td><td>365.1 &mu;s</td>
+</tr><tr><td>WriteFloatArrayData</td><td>52,110.9 &mu;s</td><td>704.36 &mu;s</td><td>588.18 &mu;s</td><td>51,791.6 &mu;s</td>
+</tr><tr><td>ReadFloatArrayData</td><td>20,131.2 &mu;s</td><td>398.96 &mu;s</td><td>729.53 &mu;s</td><td>20,333.8 &mu;s</td>
+</tr></tbody></table>
+</body>
+</html>
