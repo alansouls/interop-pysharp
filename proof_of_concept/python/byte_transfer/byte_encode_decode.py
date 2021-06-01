@@ -46,8 +46,7 @@ class ByteEncodeDecode:
         content =  bytes([ByteEncodeDecode.array_value_header])
         content += bytes([VarType.Int])
         content += bytes(struct.pack('<i', len(value)))
-        for i in value:
-            content += struct.pack('<i', i)
+        content += struct.pack('<{0}i'.format(len(value)), *value)
         return content
 
     @staticmethod
@@ -55,8 +54,7 @@ class ByteEncodeDecode:
         content =  bytes([ByteEncodeDecode.array_value_header])
         content += bytes([VarType.Float])
         content += bytes(struct.pack('<i', len(value)))
-        for i in value:
-            content += struct.pack('<d', i)
+        content += struct.pack('<{0}d'.format(len(value)), *value)
         return content
 
     @staticmethod
