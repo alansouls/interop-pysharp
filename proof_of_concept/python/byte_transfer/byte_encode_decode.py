@@ -1,6 +1,7 @@
 import struct
 from enum import IntEnum
 from timeit import main
+from typing import Type
 
 class VarType(IntEnum):
     Int = 0
@@ -77,11 +78,11 @@ class ByteEncodeDecode:
                 arrayLen = struct.unpack('<i', buffer[i : i + TypeSize.Int])[0]
                 i += TypeSize.Int
                 if type == VarType.Int:
-                    array = [struct.unpack('<i', buffer[j : j + TypeSize.Int])[0] for j in range(i, i + (arrayLen * TypeSize.Int), TypeSize.Int)]
+                    array = list(struct.unpack('<{0}i'.format(arrayLen), buffer[i : i + (TypeSize.Int * arrayLen)]))
                     result.append(array)
                     i += (arrayLen * TypeSize.Int)
                 elif type == VarType.Float:
-                    array = [struct.unpack('<d', buffer[j : j + TypeSize.Float])[0] for j in range(i, i + (arrayLen * TypeSize.Float), TypeSize.Float)]
+                    array = list(struct.unpack('<{0}d'.format(arrayLen), buffer[i : i + (TypeSize.Float * arrayLen)]))
                     result.append(array)
                     i += (arrayLen * TypeSize.Float)
         
