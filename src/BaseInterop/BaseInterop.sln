@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31321.278
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BaseInterop", "BaseInterop\BaseInterop.csproj", "{617C4936-BFD6-4AF1-94B2-FD9484D65701}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PythonInterop", "PythonInterop\PythonInterop.csproj", "{4922C1D4-7972-4C67-BD7B-8765191DF255}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{617C4936-BFD6-4AF1-94B2-FD9484D65701}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{617C4936-BFD6-4AF1-94B2-FD9484D65701}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{617C4936-BFD6-4AF1-94B2-FD9484D65701}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{617C4936-BFD6-4AF1-94B2-FD9484D65701}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4922C1D4-7972-4C67-BD7B-8765191DF255}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4922C1D4-7972-4C67-BD7B-8765191DF255}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4922C1D4-7972-4C67-BD7B-8765191DF255}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4922C1D4-7972-4C67-BD7B-8765191DF255}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {D0A6556F-4A21-48A9-8F3C-016D1DC45136}
+	EndGlobalSection
+EndGlobal
