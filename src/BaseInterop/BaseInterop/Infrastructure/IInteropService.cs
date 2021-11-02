@@ -8,10 +8,5 @@ namespace BaseInterop.Infrastructure
 {
     public interface IInteropService
     {
-        int Id { get; }
-        string Name { get; }
-        Task StartServiceAsync();
-
-        Task<object> RetrieveReturnAsync();
     }
 }

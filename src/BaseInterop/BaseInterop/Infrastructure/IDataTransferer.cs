@@ -11,8 +11,8 @@ namespace BaseInterop.Infrastructure
     {
         Type GetSupportedTypes();
 
-        void TransferData<T>(T data, DataTransferOptions options);
+        void TransferData(DataTransferOptions options, params object[] data);
 
-        void ReadData<T>(DataTransferOptions options);
+        T ReadData<T>(DataReadOptions options);
     }
 }
