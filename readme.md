@@ -135,7 +135,7 @@ AMD Ryzen 3 2200G with Radeon Vega Graphics, 1 CPU, 4 logical and 4 physical cor
 |  ReadFloatArrayData | 20,131.2 μs | 398.96 μs |   729.53 μs | 20,333.8 μs |
 
 
-TODO: Indicar método escolhido e porque.  
+O método escolhido foi o arquivo binário por ser o mais rápido e ocupar menos espaço em disco.
 
 ## Roadmap
 
@@ -148,22 +148,39 @@ O roadmap de implementação inclui os seguintes pontos:
 * Criação de testes unitários genéricos utilizando as interfaces e classes abstratas
 * Criação das classes concretas para interop com python em C#
 * Criação de testes unitários específicos usanod as classes concretas de interop com python
-* Benchmarking do interop com python
-* Criação de exemplo simples em C# chamando algumas funções simples de pyhton
-* Criação de exemplo C# com ASP.NET chamando algumas funções simples de pyhton
-* Criação de exemplo C# com ASP.NET chamando funções de processamento de imagens ou modelo de IA em python  
+* Criação de exemplo simples em C# chamando funções de reconhecimento facial em python
+* Criação de exemplo C# com ASP.NET chamando funções de reconhecimento facial em python
 
 ## Documentação
 
+A documentação será criada junto ao código seguindo o padrão de documentação xml da microsoft (https://docs.microsoft.com/pt-br/dotnet/csharp/language-reference/xmldoc/),
+e então usar algum software para gerar o documento separado como o Doxygen.
+
 ### Projeto genérico de interop em C#
+
+Projeto que conterá as classes e interfaces padrões para qualquer tipo de interoperabilidade que queira ser implementada no padrão 
+definido aqui.
 
 ### Projeto específico de interop com Python em C#
 
+Projeto que conterá as classes e interfaces padrões para a interoperabilidade em python, esse projeto dependerá do anterior.
+
 ### Exemplo simples com Console Application
 
-### Exemplo ASP.NET Core + funçoes python simples
+O objetivo desse projeto é ser capaz de receber um caminho para uma imagem 1, e para uma imagem 2,
+as duas imagens devem então ser comparadas e retornar se o rosto contido em cada imagem são compatíveis. Simulando ,então, 
+um processo de reconhecimento facial em tempo real.
 
-### Exemplo ASP.NET Core + modelo IA ou processamento de imagem em pyhton.
+O código será escrito em C# com exceção de um script em python que será escrito com uma lib de reconhecimento facial 
+(https://pypi.org/project/face-recognition).
+
+A partir desse projeto, serão criados os dois projetos citados anteriormente, dessa forma, tenho o desenvolvimento de duas bibliotecas orientado 
+ao funcionamento de um exemplo, porém sendo capaz de ser utilizada em qualquer outro projeto C#.
+
+### Exemplo ASP.NET Core + reconhecimento facial aplicado.
+
+Projeto final que envolverá uma aplicação web de webconferências para aulas em que o registro de presença do aluno ocorerrá com reconhecimento facial.
+Essa aplicação terá um frontend feito em REACT JS, backend usando ASP.NET Core em C#, usando também um ou mais scripts em python para reconhecimento facial.
 
 ## Progresso  
 1 Prova de Conceito - [ ]  
@@ -178,11 +195,11 @@ O roadmap de implementação inclui os seguintes pontos:
 ---- 1.3.2 Troca de dados a partir de um banco local sqlite - [:heavy_check_mark:]  
 ---- 1.3.3 Troca de dados a partir certo arquivo, através de memória mapeada em arquivo usando representação binária - [:heavy_check_mark:]  
 ---- 1.3.4 Troca de dados a partir de argumentos de linha de comando - [:heavy_check_mark:]  
--- 1.4 Benchmarking das operações - [ ]  
----- 1.4.1 Criar código de benchmarking para código python intermediário - [ ]  
+-- 1.4 Benchmarking das operações - [:heavy_check_mark:]    
+---- 1.4.1 Criar código de benchmarking para código python intermediário - [:heavy_check_mark:]  
 ---- 1.4.2 Criar código de benchmarking para código c# - [:heavy_check_mark:]   
 ---- 1.4.3 Guardar arquivos com resultados de benchmarking - [:heavy_check_mark:]  
--- 1.5 Decisão de soluções a partir de benchmarking e facilidade de generalização - [ ]  
+-- 1.5 Decisão de soluções a partir de benchmarking e facilidade de generalização - [:heavy_check_mark:] 
 
 ## Agradecimentos  
 Agradeço à minha família por sempre me apoiar em escolhas acadêmicas ou profissionais,  
