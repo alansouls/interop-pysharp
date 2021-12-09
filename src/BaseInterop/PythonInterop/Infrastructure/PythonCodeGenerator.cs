@@ -14,11 +14,13 @@ namespace PythonInterop.Infrastructure
             StringBuilder sb = new();
             var importsPart =
                 $@"
+import sys
 import {moduleName}
 from byte_encode_decode import VarType, ByteEncodeDecode, TypeSize";
             sb.Append(importsPart);
             var dataReadPart = $@"
-with open('{dataPath}', 'br') as f:
+processId = int(sys.argv[1])
+with open('{dataPath.Replace("\\", "\\\\")}'.format(processId), 'br') as f:
     data = ByteEncodeDecode.read_from_bytes(f.read())
     f.close()";
             sb.Append(dataReadPart);
@@ -26,14 +28,14 @@ with open('{dataPath}', 'br') as f:
             string[] parameterStringList = new string[paramCount];
             for (int i = 0; i < paramCount; ++i)
             {
-                paramsMountPart[i] = $"param{i} = data[{i}]";
+                paramsMountPart[i] = $"\nparam{i} = data[{i}]";
                 sb.Append(paramsMountPart[i]);
                 parameterStringList[i] = $"param{i}";
             }
-            var executeFunctionPart = $"result = {functionName}({string.Join(", ", parameterStringList)})";
+            var executeFunctionPart = $"\nresult = {moduleName}.{functionName}({string.Join(", ", parameterStringList)})";
             sb.Append(executeFunctionPart);
             var resultWritePart = $@"
-with open('{resultDataPath}', 'bw') as f:
+with open('{resultDataPath.Replace("\\", "\\\\")}'.format(processId), 'bw') as f:
     buffer = ByteEncodeDecode.to_byte(result)
     f.write(buffer)
     f.close()";

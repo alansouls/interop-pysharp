@@ -49,8 +49,18 @@ namespace BaseInterop.Infrastructure
         public void TransferData(DataTransferOptions options, params object[] data)
         {
             var filePath = options.Path;
-            var fileStream = File.OpenWrite(filePath);
+            using var fileStream = File.OpenWrite(filePath);
+            fileStream.Position = 0;
             var buffers = new byte[data.Length][];
+            WriteDataToBuffers(data, buffers);
+            foreach (var buffer in buffers)
+            {
+                fileStream.Write(buffer);
+            }
+        }
+
+        private void WriteDataToBuffers(object[] data, byte[][] buffers)
+        {
             int i = 0;
             foreach (var dataItem in data)
             {
@@ -58,7 +68,13 @@ namespace BaseInterop.Infrastructure
                 if (!IsTypeSupported(type))
                     throw new ArgumentException("This type is not supported by this data transfer class.");
                 if (type == typeof(int))
-                buffers[i] = ByteEncodeDecode.GetBytes(dataItem);
+                    buffers[i] = ByteEncodeDecode.GetBytes((int)dataItem);
+                else if (type == typeof(float))
+                    buffers[i] = ByteEncodeDecode.GetBytes((float)dataItem);
+                else if (type == typeof(string))
+                    buffers[i] = ByteEncodeDecode.GetBytes((string)dataItem);
+                else if (type == typeof(bool))
+                    buffers[i] = ByteEncodeDecode.GetBytes((bool)dataItem);
                 ++i;
             }
         }

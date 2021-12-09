@@ -7,7 +7,9 @@ namespace BaseInterop.DataTransfer
     public enum VarType
     {
         Int,
-        Float
+        Float,
+        Char,
+        Bool
     };
     public static class ByteEncodeDecode
     {
@@ -15,6 +17,16 @@ namespace BaseInterop.DataTransfer
         private const int ArrayValueHeaderSize = 6;
         private const int SimpleValueHeader = 0;
         private const int ArrayValueHeader = 1;
+
+        public static byte[] GetBytes(bool value)
+        {
+            byte[] content = new byte[SimpleValueHeaderSize + sizeof(bool)];
+            content[0] = SimpleValueHeader;
+            content[1] = (byte)VarType.Bool;
+            BitConverter.GetBytes(value).CopyTo(content, 2);
+            return content;
+        }
+
         public static byte[] GetBytes(int value)
         {
             byte[] content = new byte[SimpleValueHeaderSize + sizeof(int)];
@@ -23,12 +35,24 @@ namespace BaseInterop.DataTransfer
             BitConverter.GetBytes(value).CopyTo(content, 2);
             return content;
         }
+
         public static byte[] GetBytes(double value)
         {
             byte[] content = new byte[SimpleValueHeaderSize + sizeof(double)];
             content[0] = SimpleValueHeader;
             content[1] = (byte)VarType.Float;
             BitConverter.GetBytes(value).CopyTo(content, 2);
+            return content;
+        }
+
+        public static byte[] GetBytes(string value)
+        {
+            var arrayByteSize = sizeof(byte) * value.Length;
+            byte[] content = new byte[ArrayValueHeaderSize + arrayByteSize];
+            content[0] = ArrayValueHeader;
+            content[1] = (byte)VarType.Char;
+            BitConverter.GetBytes(value.Length).CopyTo(content, 2);
+            Encoding.UTF8.GetBytes(value).CopyTo(content, 2 + sizeof(int));
             return content;
         }
 
@@ -66,7 +90,7 @@ namespace BaseInterop.DataTransfer
 
         public static List<object> ReadFromBytes(byte[] buffer, out List<Type> types)
         {
-            List<object> resultObject = new List<object>();
+            var resultObject = new List<object>();
             types = new List<Type>();
             int i = 0;
             while (i < buffer.Length)
@@ -86,6 +110,11 @@ namespace BaseInterop.DataTransfer
                             resultObject.Add(BitConverter.ToDouble(buffer, i));
                             types.Add(typeof(double));
                             i += sizeof(double);
+                            break;
+                        case VarType.Bool:
+                            resultObject.Add(BitConverter.ToBoolean(buffer, i));
+                            types.Add(typeof(bool));
+                            i += sizeof(bool);
                             break;
                         default:
                             throw new Exception();
@@ -116,6 +145,11 @@ namespace BaseInterop.DataTransfer
                             }
                             resultObject.Add(arrayFloat);
                             types.Add(typeof(double[]));
+                            break;
+                        case VarType.Char:
+                            string str = Encoding.UTF8.GetString(buffer[i..(i + arrayLen)]);
+                            resultObject.Add(str);
+                            types.Add(typeof(string));
                             break;
                         default:
                             throw new Exception();

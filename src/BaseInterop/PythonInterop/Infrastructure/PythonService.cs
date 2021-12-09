@@ -14,6 +14,7 @@ namespace PythonInterop.Infrastructure
     {
 
         private readonly string _path;
+        private readonly string _moduleName;
         private readonly ICodeGenerator _codeGenerator;
         private readonly IDataTransferer _dataTransferer;
 
@@ -22,9 +23,10 @@ namespace PythonInterop.Infrastructure
         private readonly Dictionary<int, Process> _processMap;
         private int processCount;
 
-        public PythonService(string path, ICodeGenerator codeGenerator, IDataTransferer dataTransferer)
+        public PythonService(string path, string moduleName, ICodeGenerator codeGenerator, IDataTransferer dataTransferer)
         {
             _path = path;
+            _moduleName = moduleName;
             _codeGenerator = codeGenerator;
             _dataTransferer = dataTransferer;
 
@@ -35,16 +37,7 @@ namespace PythonInterop.Infrastructure
 
         protected override async Task<int> StartServiceAsync(string functionName, params object[] parameters)
         {
-            if (!_functionConnectorMap.TryGetValue(functionName, out string connectorPath))
-            {
-                var connector = _codeGenerator.GenerateCommunicatorCode(_path, functionName);
-                connectorPath = Path.Combine(Directory.GetCurrentDirectory(), $"{functionName}_connector.py");
-                var file = File.Create(connectorPath);
-                var buffer = Encoding.UTF8.GetBytes(connector);
-                await file.WriteAsync(buffer.AsMemory(0, buffer.Length));
-                _functionConnectorMap.Add(functionName, connectorPath);
-            }
-
+            string connectorPath = GetConnectorPath(functionName, parameters.Length);
             var processId = ++processCount;
             PreparePythonTransfer(processId, parameters);
 
@@ -55,13 +48,35 @@ namespace PythonInterop.Infrastructure
             return processId;
         }
 
+        private string GetConnectorPath(string functionName, int paramsCount)
+        {
+            if (!_functionConnectorMap.TryGetValue(functionName, out string connectorPath))
+            {
+                var connector = _codeGenerator.GenerateCommunicatorCode(Path.Combine(Directory.GetCurrentDirectory(), "_in_{0}.dat"), Path.Combine(Directory.GetCurrentDirectory(), "_out_{0}.dat"),
+                    _moduleName, functionName, paramsCount);
+                connectorPath = Path.Combine(Directory.GetCurrentDirectory(), $"{functionName}_connector.py");
+                using var fileStream = File.OpenWrite(connectorPath);
+                fileStream.Position = 0;
+                var buffer = Encoding.UTF8.GetBytes(connector);
+                fileStream.Write(buffer);
+                _functionConnectorMap.Add(functionName, connectorPath);
+            }
+
+            return connectorPath;
+        }
+
         private void PreparePythonTransfer(int processId, object[] parameters)
         {
             var options = new DataTransferOptions()
             {
-                Path = Path.Combine(Directory.GetCurrentDirectory(), $"_in_{processId}.dat")
+                Path = GetDataInPath(processId)
             };
             _dataTransferer.TransferData(options, parameters);
+        }
+
+        private static string GetDataInPath(int processId)
+        {
+            return Path.Combine(Directory.GetCurrentDirectory(), $"_in_{processId}.dat");
         }
 
         private static ProcessStartInfo GetPythonProcessStartInfo(string connectorPath, int processId)
@@ -69,7 +84,8 @@ namespace PythonInterop.Infrastructure
             return new ProcessStartInfo
             {
                 FileName = "python.exe",
-                Arguments = string.Format("{0}, {1}", connectorPath, processId),
+                Arguments = string.Format("{0} {1}", connectorPath, processId),
+                RedirectStandardError = true,
                 UseShellExecute = false
             };
         }
@@ -78,13 +94,22 @@ namespace PythonInterop.Infrastructure
         {
             var process = _processMap[processId];
             await process.WaitForExitAsync();
+            if (process.ExitCode != 0)
+            {
+                throw new Exception($"Error executing python script {process.StandardError.ReadToEnd()}");
+            }
             var options = new DataReadOptions
             {
-                Path = Path.Combine(Directory.GetCurrentDirectory(), $"_out_{processId}.dat")
+                Path = GetDataOutPath(processId)
             };
             var data = _dataTransferer.ReadData<T>(options);
             CleanProcessFiles(processId);
             return data;
+        }
+
+        private static string GetDataOutPath(int processId)
+        {
+            return Path.Combine(Directory.GetCurrentDirectory(), $"_out_{processId}.dat");
         }
 
         private static void CleanProcessFiles(int processId)
