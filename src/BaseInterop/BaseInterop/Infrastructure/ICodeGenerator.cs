@@ -8,6 +8,6 @@ namespace BaseInterop.Infrastructure
 {
     public interface ICodeGenerator
     {
-        string GenerateCommunicatorCode(string filePath, string functionName);
+        string GenerateCommunicatorCode(string dataPath, string resultDataPath, string filePath, string functionName, int paramCount);
     }
 }

@@ -9,7 +9,7 @@ namespace BaseInterop.Infrastructure
 {
     public interface IDataTransferer
     {
-        Type GetSupportedTypes();
+        List<Type> GetSupportedTypes();
 
         void TransferData(DataTransferOptions options, params object[] data);
 
