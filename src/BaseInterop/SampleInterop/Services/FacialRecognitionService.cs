@@ -6,8 +6,8 @@ namespace SampleInterop.Services
 {
     public class FacialRecognitionService : PythonService, IFacialRecognitionService
     {
-        public FacialRecognitionService(string path, ICodeGenerator codeGenerator, IDataTransferer dataTransferer) 
-            : base(path, "facial_rec", codeGenerator, dataTransferer)
+        public FacialRecognitionService(ICodeGenerator codeGenerator, IDataTransferer dataTransferer) 
+            : base("scripts", "facial_rec", codeGenerator, dataTransferer)
         {
         }
 

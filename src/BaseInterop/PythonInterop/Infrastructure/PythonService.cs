@@ -12,9 +12,10 @@ namespace PythonInterop.Infrastructure
 {
     public class PythonService : InteropService, IInteropService
     {
-
-        private readonly string _path;
+        private readonly Guid _uniqueIdentifier;
+        private readonly string _folderPath;
         private readonly string _moduleName;
+        private readonly string _workingDirectory;
         private readonly ICodeGenerator _codeGenerator;
         private readonly IDataTransferer _dataTransferer;
 
@@ -23,9 +24,14 @@ namespace PythonInterop.Infrastructure
         private readonly Dictionary<int, Process> _processMap;
         private int processCount;
 
-        public PythonService(string path, string moduleName, ICodeGenerator codeGenerator, IDataTransferer dataTransferer)
+        public PythonService(string folderPath, string moduleName, ICodeGenerator codeGenerator, IDataTransferer dataTransferer)
         {
-            _path = path;
+            _uniqueIdentifier = Guid.NewGuid();
+            _folderPath = folderPath;
+            _workingDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+                "sharpinterop", $"python_{_uniqueIdentifier}");
+            Directory.CreateDirectory(_workingDirectory);
+            CopyPythonFilesToWorkingDirectory();
             _moduleName = moduleName;
             _codeGenerator = codeGenerator;
             _dataTransferer = dataTransferer;
@@ -33,6 +39,19 @@ namespace PythonInterop.Infrastructure
             _functionConnectorMap = new Dictionary<string, string>();
             _processMap = new Dictionary<int, Process>();
             processCount = 0;
+        }
+
+        private void CopyPythonFilesToWorkingDirectory()
+        {
+            foreach (var file in Directory.GetFiles(Path.Combine(Directory.GetCurrentDirectory(), "py_scripts")))
+            {
+                File.Copy(file, Path.Combine(_workingDirectory, Path.GetFileName(file)));
+            }
+
+            foreach (var file in Directory.GetFiles(_folderPath))
+            {
+                File.Copy(file, Path.Combine(_workingDirectory, Path.GetFileName(file)));
+            }
         }
 
         protected override async Task<int> StartServiceAsync(string functionName, params object[] parameters)
@@ -52,9 +71,9 @@ namespace PythonInterop.Infrastructure
         {
             if (!_functionConnectorMap.TryGetValue(functionName, out string connectorPath))
             {
-                var connector = _codeGenerator.GenerateCommunicatorCode(Path.Combine(Directory.GetCurrentDirectory(), "_in_{0}.dat"), Path.Combine(Directory.GetCurrentDirectory(), "_out_{0}.dat"),
+                var connector = _codeGenerator.GenerateCommunicatorCode(Path.Combine(_workingDirectory, "_in_{0}.dat"), Path.Combine(_workingDirectory, "_out_{0}.dat"),
                     _moduleName, functionName, paramsCount);
-                connectorPath = Path.Combine(Directory.GetCurrentDirectory(), $"{functionName}_connector.py");
+                connectorPath = Path.Combine(_workingDirectory, $"{functionName}_connector.py");
                 using var fileStream = File.OpenWrite(connectorPath);
                 fileStream.Position = 0;
                 var buffer = Encoding.UTF8.GetBytes(connector);
@@ -74,9 +93,9 @@ namespace PythonInterop.Infrastructure
             _dataTransferer.TransferData(options, parameters);
         }
 
-        private static string GetDataInPath(int processId)
+        private string GetDataInPath(int processId)
         {
-            return Path.Combine(Directory.GetCurrentDirectory(), $"_in_{processId}.dat");
+            return Path.Combine(_workingDirectory, $"_in_{processId}.dat");
         }
 
         private static ProcessStartInfo GetPythonProcessStartInfo(string connectorPath, int processId)
@@ -107,22 +126,20 @@ namespace PythonInterop.Infrastructure
             return data;
         }
 
-        private static string GetDataOutPath(int processId)
+        private string GetDataOutPath(int processId)
         {
-            return Path.Combine(Directory.GetCurrentDirectory(), $"_out_{processId}.dat");
+            return Path.Combine(_workingDirectory, $"_out_{processId}.dat");
         }
 
-        private static void CleanProcessFiles(int processId)
+        private void CleanProcessFiles(int processId)
         {
-            File.Delete(Directory.GetCurrentDirectory() + $"_out_{processId}.dat");
-            File.Delete(Directory.GetCurrentDirectory() + $"_in_{processId}.dat");
+            File.Delete(Path.Combine(_workingDirectory, $"_out_{processId}.dat"));
+            File.Delete(Path.Combine(_workingDirectory, $"_in_{processId}.dat"));
         }
 
         public override void Dispose()
         {
-            foreach (var file in _functionConnectorMap.Values)
-                File.Delete(file);
-
+            Directory.Delete(_workingDirectory, true);
             GC.SuppressFinalize(this);
         }
     }

@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
@@ -6,6 +6,12 @@
 
   <ItemGroup>
     <ProjectReference Include="..\BaseInterop\BaseInterop.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="py_scripts\byte_encode_decode.py">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>

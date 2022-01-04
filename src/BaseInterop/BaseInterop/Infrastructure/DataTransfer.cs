@@ -26,7 +26,7 @@ namespace BaseInterop.Infrastructure
             if (!IsTypeSupported<T>())
                 throw new ArgumentException("This type is not supported by this data transfer class.");
             var filePath = options.Path;
-            var fileStream = File.OpenRead(filePath);
+            using var fileStream = File.OpenRead(filePath);
             var buffer = new byte[fileStream.Length];
             fileStream.Read(buffer);
             var resultList = ByteEncodeDecode.ReadFromBytes(buffer, out var typesOut);

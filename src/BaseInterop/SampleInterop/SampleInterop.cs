@@ -7,17 +7,21 @@ using System.Threading.Tasks;
 
 namespace SampleInterop
 {
-    public class SampleInterop
+    public class SampleInterop : IDisposable
     {
-        FacialRecognitionService _facialReconService;
+        private readonly FacialRecognitionService _facialReconService;
         public SampleInterop(FacialRecognitionService facialReconService)
         {
             _facialReconService = facialReconService;
         }
-
         public void Run(string originalPath, string comparingPath)
         {
             Console.WriteLine(_facialReconService.CheckFacesAsync(originalPath, comparingPath).Result ? "Verificação sucedida" : "Verificação falhou");
+        }
+
+        public void Dispose()
+        {
+            _facialReconService.Dispose();
         }
     }
 }
