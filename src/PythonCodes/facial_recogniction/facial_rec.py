@@ -13,3 +13,8 @@ def check_facial_validation(ref_pic, target_pic):   # check if the facial recogn
     results = face_recognition.compare_faces([known_face_encoding], unknown_face_encoding)
     # check if the faces are the same
     return results[0]
+
+
+result = check_facial_validation('pictures/alan.jpg', 'pictures/jordan.jpg')
+
+print(result)

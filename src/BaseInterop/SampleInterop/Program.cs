@@ -9,7 +9,9 @@ namespace SampleInterop
     {
         static void Main(string[] args)
         {
-            using var app = new SampleInterop(new FacialRecognitionService(new PythonCodeGenerator(), new DataTransfer()));
+            var dataTransfer = new DataTransfer();
+            dataTransfer.AddDefaultAdapter();
+            using var app = new SampleInterop(new FacialRecognitionService(new PythonCodeGenerator(), dataTransfer));
 
             app.Run("image1.jpg", "image2.jpg");
             app.Run("image1.jpg", "image3.jpg");

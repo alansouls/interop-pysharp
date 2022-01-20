@@ -10,15 +10,29 @@ namespace BaseInterop.Infrastructure
 {
     public class DataTransfer : IDataTransferer
     {
+        private readonly List<ICodecAdapter> _adapters;
+
+        public DataTransfer()
+        {
+            _adapters = new List<ICodecAdapter>();
+        }
+
+        public DataTransfer AddDefaultAdapter()
+        {
+            return AddAdapter(new DefaultCodecAdapter());
+        }
+
+        public DataTransfer AddAdapter(ICodecAdapter adapter)
+        {
+            if (!_adapters.Any(s => s.GetType() == adapter.GetType()))
+                _adapters.Add(adapter);
+
+            return this;
+        }
+
         public List<Type> GetSupportedTypes()
         {
-            return new List<Type>
-            {
-                typeof(int),
-                typeof(double),
-                typeof(string),
-                typeof(bool)
-            };
+            return _adapters.SelectMany(s => s.GetSupportedTypes()).ToList();
         }
 
         public T ReadData<T>(DataReadOptions options)
@@ -67,14 +81,8 @@ namespace BaseInterop.Infrastructure
                 var type = dataItem.GetType();
                 if (!IsTypeSupported(type))
                     throw new ArgumentException("This type is not supported by this data transfer class.");
-                if (type == typeof(int))
-                    buffers[i] = ByteEncodeDecode.GetBytes((int)dataItem);
-                else if (type == typeof(float))
-                    buffers[i] = ByteEncodeDecode.GetBytes((float)dataItem);
-                else if (type == typeof(string))
-                    buffers[i] = ByteEncodeDecode.GetBytes((string)dataItem);
-                else if (type == typeof(bool))
-                    buffers[i] = ByteEncodeDecode.GetBytes((bool)dataItem);
+                var adapter = _adapters.First(s => s.GetSupportedTypes().Contains(type));
+                buffers[i] = adapter.GetBytes(dataItem);
                 ++i;
             }
         }
