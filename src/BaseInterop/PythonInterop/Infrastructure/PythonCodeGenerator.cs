@@ -13,8 +13,7 @@ namespace PythonInterop.Infrastructure
         {
             StringBuilder sb = new();
             var importsPart =
-                $@"
-import sys
+                $@"import sys
 import {moduleName}
 from byte_encode_decode import VarType, ByteEncodeDecode, TypeSize";
             sb.Append(importsPart);

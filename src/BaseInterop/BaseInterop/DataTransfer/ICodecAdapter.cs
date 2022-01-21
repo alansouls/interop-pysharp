@@ -11,5 +11,7 @@ namespace BaseInterop.DataTransfer
         List<Type> GetSupportedTypes();
 
         byte[] GetBytes(object data);
+
+        T ReadDataFromBytes<T>(byte[] buffer);
     }
 }

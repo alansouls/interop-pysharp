@@ -43,11 +43,10 @@ namespace BaseInterop.Infrastructure
             using var fileStream = File.OpenRead(filePath);
             var buffer = new byte[fileStream.Length];
             fileStream.Read(buffer);
-            var resultList = ByteEncodeDecode.ReadFromBytes(buffer, out var typesOut);
-            if (typesOut[0] != typeof(T))
-                throw new Exception("The type read from the file was different from the type requested.");
-            var result = resultList[0];
-            return (T)result;
+            if (!IsTypeSupported(typeof(T)))
+                throw new ArgumentException("This type is not supported by this data transfer class.");
+            var adapter = _adapters.First(s => s.GetSupportedTypes().Contains(typeof(T)));
+            return adapter.ReadDataFromBytes<T>(buffer);
         }
 
         private bool IsTypeSupported<T>()
