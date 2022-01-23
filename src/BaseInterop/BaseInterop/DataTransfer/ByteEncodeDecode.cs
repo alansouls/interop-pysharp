@@ -148,7 +148,7 @@ namespace BaseInterop.DataTransfer
                             break;
                         case VarType.Char:
                             string str = Encoding.UTF8.GetString(buffer[i..(i + arrayLen)]);
-                            i += 3;
+                            i += arrayLen;
                             resultObject.Add(str);
                             types.Add(typeof(string));
                             break;
