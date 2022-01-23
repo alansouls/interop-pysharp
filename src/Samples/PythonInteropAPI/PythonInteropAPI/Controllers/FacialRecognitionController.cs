@@ -16,14 +16,18 @@ namespace PythonInteropAPI.Controllers
     public class FacialRecognitionController : ControllerBase
     {
         private readonly IFacialRecognitionService _service;
-        public FacialRecognitionController(IFacialRecognitionService service)
+        private readonly ILogger<FacialRecognitionController> _logger;
+        public FacialRecognitionController(IFacialRecognitionService service,
+            ILogger<FacialRecognitionController> logger)
         {
             _service = service;
+            _logger = logger;
         }
 
         [HttpPost("compare")]
         public async Task<IActionResult> Blur(IFormFile face1, IFormFile face2)
         {
+            var start = DateTime.Now;
             string sourceImage1Path = face1.GetLocalFilePath();
             string sourceImage2Path = face2.GetLocalFilePath();
 
@@ -32,6 +36,7 @@ namespace PythonInteropAPI.Controllers
             System.IO.File.Delete(sourceImage1Path);
             System.IO.File.Delete(sourceImage2Path);
 
+            _logger.LogInformation("Took {} ms", (DateTime.Now - start).TotalMilliseconds);
             return Ok(new { sameFaces = output });
         }
     }
